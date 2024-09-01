@@ -20,15 +20,15 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { email, password }: { email: string; password: string } = req.body;
 
+        // validation errors
 		const errors = validateLogin(email, password);
 		if (errors.length > 0) return res.status(400).json({ errors });
-
+        
 		const user = await User.findOne({ email }).select('+password');
-		if (!user)
-			return res.status(400).json({ errors: [{ field: 'email', error: 'User with provided email does not exist.' }] });
+		if (!user) throw new AppError('Invalid credentials.', 400);
 
-        const arePasswordsSame = await user.comparePasswords(password);
-        if(!arePasswordsSame) return res.status(401).json({errors: [{field: 'password', error: 'Incorrect password.'}]})
+		const arePasswordsSame = await user.comparePasswords(password);
+		if (!arePasswordsSame) throw new AppError('Invalid credentials.', 400);
 
 		const payload = { _id: user.id };
 		const jwt = await createToken(payload);
