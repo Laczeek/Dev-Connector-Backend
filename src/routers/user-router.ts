@@ -1,13 +1,9 @@
-import { NextFunction, Request, Response, Router } from "express";
+import { Router } from 'express';
+
+import userController from '../controllers/user-controller';
+
 const router = Router();
 
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
- 
-
-    
-
-    res.send('User route.')
-})
-
+router.post('/', userController.registerUser);
 
 export default router;
