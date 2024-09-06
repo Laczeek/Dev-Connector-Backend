@@ -18,12 +18,12 @@ type UserModel = Model<IUser, {}, IUserMethods>;
 const userSchema = new Schema<IUser, UserModel, IUserMethods>({
 	name: {
 		type: String,
-		required: true,
+		required: [true, 'Please provide your name.'],
 		minlength: [1, 'Please provide correct name.'],
 	},
 	email: {
 		type: String,
-		required: true,
+		required: [true, 'Please probide your email.'],
 		lowercase: true,
 		unique: true,
 		validate: {
@@ -35,7 +35,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
 	},
 	password: {
 		type: String,
-		required: true,
+		required: [true, 'Please provide your password.'],
 		minlength: [6, 'Password must be at least 6 characters long.'],
 		select: false,
 	},

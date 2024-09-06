@@ -20,10 +20,10 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { email, password }: { email: string; password: string } = req.body;
 
-        // validation errors
+		// validation errors
 		const errors = validateLogin(email, password);
 		if (errors.length > 0) return res.status(400).json({ errors });
-        
+
 		const user = await User.findOne({ email }).select('+password');
 		if (!user) throw new AppError('Invalid credentials.', 400);
 

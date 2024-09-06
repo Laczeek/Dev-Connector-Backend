@@ -10,17 +10,23 @@ const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunc
 	if (err instanceof Error.ValidationError && err.name === 'ValidationError') {
 		const errorsArray: { field: string; error: string }[] = [];
 		const allErrors = err.errors;
-		Object.keys(allErrors).forEach(key =>
-			errorsArray.push({ field: allErrors[key].path, error: allErrors[key].message })
-		);
+		console.log(allErrors);
 
-        return res.status(400).json({errors: errorsArray})
+		Object.keys(allErrors).forEach(key => errorsArray.push({ field: allErrors[key].path, error: allErrors[key].message }));
+
+		return res.status(400).json({ errors: errorsArray });
 	}
 
 	if (err instanceof mongo.MongoServerError && err.code === 11000) {
 		const indexName = Object.keys(err.keyPattern)[0];
 
-        return res.status(400).json({errors: [{field: indexName, error : `This ${indexName} is already in use.`}]})
+		let errorMsg: string = `This ${indexName} is already in use.`;
+
+		if (indexName === 'user') {
+			errorMsg = 'You already have your profile.';
+		}
+
+		err = new AppError(errorMsg, 400);
 	}
 
 	// OPERATIONAL ERRORS

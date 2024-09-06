@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 import errorMiddleware from './middlewares/error-middleware';
 import userRouter from './routers/user-router';
 import authRouter from './routers/auth-router';
+import profileRouter from './routers/profile-router';
+import postRouter from './routers/post-router';
 
 const PORT = process.env.PORT || 8080;
 const MONGO_URL = process.env.MONGO_URL!;
@@ -15,6 +17,8 @@ app.use(express.json());
 // routes
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
+app.use('/api/profiles', profileRouter);
+app.use('/api/posts', postRouter);
 
 // error middleware
 app.use(errorMiddleware);

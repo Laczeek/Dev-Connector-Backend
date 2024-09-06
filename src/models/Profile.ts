@@ -1,4 +1,4 @@
-import { Schema, Types, model } from 'mongoose';
+import { Model, Schema, Types, model } from 'mongoose';
 
 interface IProfile {
 	user: Types.ObjectId;
@@ -23,22 +23,33 @@ interface IProfile {
 	createdAt: Date;
 }
 
-const profileSchema = new Schema<IProfile>({
+interface ProfileModel extends Model<IProfile> {
+	createSkillsArray(skills: string): string[];
+}
+
+const profileSchema = new Schema<IProfile, ProfileModel>({
 	user: {
 		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: true,
+		unique: true,
 	},
 	company: String,
 	website: String,
 	location: String,
 	status: {
 		type: String,
-		required: true,
+		required: [true, 'Please provide your status.'],
 	},
 	skills: {
 		type: [String],
 		required: true,
+		validate: {
+			validator: (val: string[]) => {
+				return val.length > 0;
+			},
+			message: 'Please provide your skills.',
+		},
 	},
 	bio: String,
 	githubusername: String,
@@ -46,16 +57,16 @@ const profileSchema = new Schema<IProfile>({
 		{
 			title: {
 				type: String,
-				required: true,
+				required: [true, 'Please provide the title of your experience.'],
 			},
 			company: {
 				type: String,
-				required: true,
+				required: [true, 'Please provide the name of the company you worked for.'],
 			},
 			location: String,
 			from: {
 				type: Date,
-				required: true,
+				required: [true, 'Please provide a start date.'],
 			},
 			to: Date,
 			current: {
@@ -69,19 +80,19 @@ const profileSchema = new Schema<IProfile>({
 		{
 			school: {
 				type: String,
-				required: true,
+				required: [true, 'Please provide the name of the school where you gained experience.'],
 			},
 			degree: {
 				type: String,
-				required: true,
+				required: [true, 'Please provide a graduation rating.'],
 			},
 			fieldofstudy: {
 				type: String,
-				required: true,
+				required: [true, 'Please specify your field of study.'],
 			},
 			from: {
 				type: Date,
-				required: true,
+				required: [true, 'Please indicate the start date of your school.'],
 			},
 			to: Date,
 			current: {
@@ -104,4 +115,7 @@ const profileSchema = new Schema<IProfile>({
 	},
 });
 
-export default model<IProfile>('Profile', profileSchema);
+profileSchema.static('createSkillsArray', function (skills: string) {
+	return skills.split(/,\s*/);
+});
+export default model<IProfile, ProfileModel>('Profile', profileSchema);
