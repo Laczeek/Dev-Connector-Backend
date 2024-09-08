@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 
 import errorMiddleware from './middlewares/error-middleware';
 import userRouter from './routers/user-router';
@@ -12,6 +13,8 @@ const MONGO_URL = process.env.MONGO_URL!;
 
 mongoose.connect(MONGO_URL);
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 // routes

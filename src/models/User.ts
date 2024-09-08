@@ -23,7 +23,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
 	},
 	email: {
 		type: String,
-		required: [true, 'Please probide your email.'],
+		required: [true, 'Please provide your email.'],
 		lowercase: true,
 		unique: true,
 		validate: {

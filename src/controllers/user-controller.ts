@@ -1,13 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import gravatar from 'gravatar';
+import AppError from '../utils/AppError';
 
 import User from '../models/User';
 import { createToken } from '../utils/jwt-promise';
 
-const registerUser  = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-		const { name, email, password } = req.body;
+const registerUser = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const { name, email, password, passwordConfirm } = req.body;
 
+		if (passwordConfirm !== password) throw new AppError('Passwords must be the same.', 400, 'password');
 		const avatar = gravatar.url(email, {
 			s: '200',
 			r: 'pg',
@@ -17,15 +19,14 @@ const registerUser  = async (req: Request, res: Response, next: NextFunction) =>
 		const user = await User.create({ name, email, password, avatar });
 
 		const payload = { _id: user.id };
-
 		const jwt = await createToken(payload);
 
 		res.status(201).json({ jwt });
 	} catch (err) {
 		next(err);
 	}
-}
+};
 
 export default {
-    registerUser
-}
+	registerUser,
+};
