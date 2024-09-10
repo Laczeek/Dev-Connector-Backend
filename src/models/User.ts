@@ -39,7 +39,10 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
 		minlength: [6, 'Password must be at least 6 characters long.'],
 		select: false,
 	},
-	avatar: String,
+	avatar: {
+		type: String,
+		required: [true, 'Please provide your avatar image.'],
+	},
 	createdAt: {
 		type: Date,
 		default: Date.now(),

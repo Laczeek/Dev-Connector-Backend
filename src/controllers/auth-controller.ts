@@ -10,7 +10,7 @@ const getAuthenticatedUser = async (req: Request, res: Response, next: NextFunct
 	try {
 		const user = await User.findById(req.user!._id);
 
-		res.status(200).json(user);
+		res.status(200).json({user});
 	} catch (err) {
 		next(err);
 	}
@@ -33,7 +33,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 		const payload = { _id: user.id };
 		const jwt = await createToken(payload);
 
-		res.status(200).json({ jwt });
+		res.status(200).json({ jwt, user: { name: user.name, _id: user.id, email: user.email, avatar: user.avatar } });
 	} catch (err) {
 		next(err);
 	}

@@ -2,9 +2,19 @@ import { NextFunction, Request, Response } from 'express';
 import { mongo, Error } from 'mongoose';
 
 import AppError from '../utils/AppError';
+import { removeImage } from '../utils/handle-images';
+import { MulterError } from 'multer';
 
 const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
 	console.error(err);
+
+	if (req.filePath) {
+		removeImage(req.filePath);
+	}
+
+	if (err instanceof MulterError) {
+		err = new AppError('Something went wrong while processing the image.', 500);
+	}
 
 	// MONGO VALIDATION ERRORS
 	if (err instanceof Error.ValidationError && err.name === 'ValidationError') {
