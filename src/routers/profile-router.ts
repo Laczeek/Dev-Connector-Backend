@@ -5,14 +5,14 @@ import profileController from '../controllers/profile-controller';
 
 const router = Router();
 
-// public endpoints
 router.get('/', profileController.getAllProfiles);
+
+router.get('/me', authMiddleware, profileController.getAuthUserProfile);
+
 router.get('/:uid', profileController.getUserProfile);
 router.get('/github/:githubName', profileController.getGithubRepos);
 
-// private endpoints
 router.use(authMiddleware);
-router.get('/me', profileController.getAuthUserProfile);
 router.put('/', profileController.createOrUpdateProfile);
 router.delete('/', profileController.deleteProfileAndUser);
 

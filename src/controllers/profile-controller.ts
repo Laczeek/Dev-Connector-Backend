@@ -9,6 +9,7 @@ import { Error } from 'mongoose';
 
 const getAuthUserProfile = async (req: Request, res: Response, next: NextFunction) => {
 	try {
+		console.log(req.user?._id);
 		const profile = await Profile.findOne({ user: req.user!._id }).populate('user', ['name', 'avatar']);
 
 		if (!profile) throw new AppError("You don't have a profile yet.", 404);
