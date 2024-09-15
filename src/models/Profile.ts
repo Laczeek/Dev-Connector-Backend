@@ -39,6 +39,7 @@ const profileSchema = new Schema<IProfile, ProfileModel>({
 	location: String,
 	status: {
 		type: String,
+		trim: true,
 		required: [true, 'Please provide your status.'],
 	},
 	skills: {
@@ -57,10 +58,12 @@ const profileSchema = new Schema<IProfile, ProfileModel>({
 		{
 			title: {
 				type: String,
+				trim: true,
 				required: [true, 'Please provide the title of your experience.'],
 			},
 			company: {
 				type: String,
+				trim: true,
 				required: [true, 'Please provide the name of the company you worked for.'],
 			},
 			location: String,
@@ -80,14 +83,17 @@ const profileSchema = new Schema<IProfile, ProfileModel>({
 		{
 			school: {
 				type: String,
+				trim: true,
 				required: [true, 'Please provide the name of the school where you gained experience.'],
 			},
 			degree: {
 				type: String,
+				trim: true,
 				required: [true, 'Please provide a graduation rating.'],
 			},
 			fieldofstudy: {
 				type: String,
+				trim: true,
 				required: [true, 'Please specify your field of study.'],
 			},
 			from: {

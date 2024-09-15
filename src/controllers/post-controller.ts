@@ -55,7 +55,7 @@ const deletePost = async (req: Request, res: Response, next: NextFunction) => {
 
 		await Post.deleteOne({ _id: pid });
 
-		res.status(204).send();
+		res.status(204).json({ message: 'success' });
 	} catch (err) {
 		if (err instanceof Error.CastError && err.kind === 'ObjectId') {
 			err = new AppError('Post not found.', 404);
@@ -111,16 +111,16 @@ const addCommentToPost = async (req: Request, res: Response, next: NextFunction)
 
 const removeCommentFromPost = async (req: Request, res: Response, next: NextFunction) => {
 	const { pid, cid } = req.params;
-    console.log(cid);
+	console.log(cid);
 	try {
 		const post = await Post.findOneAndUpdate(
 			{ _id: pid, comments: { $elemMatch: { _id: cid, user: req.user!._id } } },
 			{ $pull: { comments: { _id: cid } } }
 		);
-		
+
 		if (!post) throw new AppError('Comment not found.', 404);
 
-		res.status(204).send();
+		res.status(204).json({ message: 'success' });
 	} catch (err) {
 		next(err);
 	}

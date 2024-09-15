@@ -4,6 +4,7 @@ import { ClientSession, startSession } from 'mongoose';
 
 import Profile from '../models/Profile';
 import User from '../models/User';
+import Post from '../models/Post';
 import AppError from '../utils/AppError';
 import { Error } from 'mongoose';
 
@@ -29,6 +30,8 @@ const createOrUpdateProfile = async (req: Request, res: Response, next: NextFunc
 			);
 
 		const profileData = { ...req.body };
+		if (profileData.skills.trim().length === 0) throw new AppError('Please provide your skills.', 400, 'skills');
+
 		if (profileData.user) {
 			delete profileData.user;
 		}
@@ -44,7 +47,7 @@ const createOrUpdateProfile = async (req: Request, res: Response, next: NextFunc
 		const profile = await Profile.findOneAndUpdate(
 			{ user: req.user!._id },
 			{ ...profileData, skills: skillsArray },
-			{ upsert: true, new: true }
+			{ upsert: true, new: true, runValidators: true }
 		);
 
 		res.status(200).json(profile);
@@ -87,10 +90,11 @@ const deleteProfileAndUser = async (req: Request, res: Response, next: NextFunct
 
 		await Profile.findOneAndDelete({ user: userId }, { session });
 		await User.findByIdAndDelete(userId, { session });
-		//TODO - Remove all users posts
+		await Post.deleteMany({user: userId}, {session});
+		
 		await session.commitTransaction();
 
-		res.status(204).send();
+		res.status(204).json({message: 'success'});
 	} catch (err) {
 		await session.abortTransaction();
 		next(err);
@@ -111,6 +115,7 @@ const addProfileExperience = async (req: Request, res: Response, next: NextFunct
 			},
 			{ runValidators: true, new: true }
 		);
+		
 
 		res.status(200).json(updatedProfile);
 	} catch (err) {
@@ -122,10 +127,10 @@ const deleteProfileExperience = async (req: Request, res: Response, next: NextFu
 	const eid = req.params.eid;
 	try {
 		const result = await Profile.updateOne({ user: req.user!._id }, { $pull: { experience: { _id: eid } } });
-	
+
 		if (result.modifiedCount === 0) throw new AppError('There is no experience with the given _id.', 404);
 
-		res.status(204).send();
+		res.status(204).json({message: 'success'});
 	} catch (err) {
 		next(err);
 	}
@@ -162,7 +167,7 @@ const deleteProfileEducation = async (req: Request, res: Response, next: NextFun
 
 		if (result.modifiedCount === 0) throw new AppError('There is no education with the given _id.', 404);
 
-		res.status(204).send();
+		res.status(204).json({message: 'success'});
 	} catch (err) {
 		next(err);
 	}
