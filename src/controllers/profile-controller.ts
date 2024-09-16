@@ -58,7 +58,7 @@ const createOrUpdateProfile = async (req: Request, res: Response, next: NextFunc
 
 const getAllProfiles = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const profiles = await Profile.find({}).populate('user', ['avatar', 'name']);
+		const profiles = await Profile.find({}, 'user company status location skills').populate('user', ['avatar', 'name']);
 
 		res.status(200).json(profiles);
 	} catch (err) {
@@ -90,11 +90,11 @@ const deleteProfileAndUser = async (req: Request, res: Response, next: NextFunct
 
 		await Profile.findOneAndDelete({ user: userId }, { session });
 		await User.findByIdAndDelete(userId, { session });
-		await Post.deleteMany({user: userId}, {session});
-		
+		await Post.deleteMany({ user: userId }, { session });
+
 		await session.commitTransaction();
 
-		res.status(204).json({message: 'success'});
+		res.status(204).json({ message: 'success' });
 	} catch (err) {
 		await session.abortTransaction();
 		next(err);
@@ -115,7 +115,6 @@ const addProfileExperience = async (req: Request, res: Response, next: NextFunct
 			},
 			{ runValidators: true, new: true }
 		);
-		
 
 		res.status(200).json(updatedProfile);
 	} catch (err) {
@@ -130,7 +129,7 @@ const deleteProfileExperience = async (req: Request, res: Response, next: NextFu
 
 		if (result.modifiedCount === 0) throw new AppError('There is no experience with the given _id.', 404);
 
-		res.status(204).json({message: 'success'});
+		res.status(204).json({ message: 'success' });
 	} catch (err) {
 		next(err);
 	}
@@ -167,7 +166,7 @@ const deleteProfileEducation = async (req: Request, res: Response, next: NextFun
 
 		if (result.modifiedCount === 0) throw new AppError('There is no education with the given _id.', 404);
 
-		res.status(204).json({message: 'success'});
+		res.status(204).json({ message: 'success' });
 	} catch (err) {
 		next(err);
 	}

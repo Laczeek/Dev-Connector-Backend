@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import path from 'path';
 
 import errorMiddleware from './middlewares/error-middleware';
 import userRouter from './routers/user-router';
@@ -15,6 +16,7 @@ mongoose.connect(MONGO_URL);
 const app = express();
 
 app.use(cors());
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use(express.json());
 // routes
