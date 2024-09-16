@@ -22,7 +22,7 @@ const createPost = async (req: Request, res: Response, next: NextFunction) => {
 
 const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const posts = await Post.find({});
+		const posts = await Post.find({}).sort({ _id: -1 });
 
 		res.status(200).json(posts);
 	} catch (err) {
@@ -96,14 +96,19 @@ const addCommentToPost = async (req: Request, res: Response, next: NextFunction)
 		const post = await Post.findByIdAndUpdate(
 			pid,
 			{
-				$push: { comments: { text, user: user.id, name: user.name, avatar: user.avatar } },
+				$push: {
+					comments: {
+						$each: [{ text, user: user.id, name: user.name, avatar: user.avatar }],
+						$position: 0,
+					},
+				},
 			},
 			{ runValidators: true, new: true }
 		);
 
 		if (!post) throw new AppError('Post not found.', 404);
 
-		res.status(201).json(post?.comments);
+		res.status(201).json(post);
 	} catch (err) {
 		next(err);
 	}
@@ -111,7 +116,6 @@ const addCommentToPost = async (req: Request, res: Response, next: NextFunction)
 
 const removeCommentFromPost = async (req: Request, res: Response, next: NextFunction) => {
 	const { pid, cid } = req.params;
-	console.log(cid);
 	try {
 		const post = await Post.findOneAndUpdate(
 			{ _id: pid, comments: { $elemMatch: { _id: cid, user: req.user!._id } } },

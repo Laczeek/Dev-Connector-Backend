@@ -10,7 +10,6 @@ import { Error } from 'mongoose';
 
 const getAuthUserProfile = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		console.log(req.user?._id);
 		const profile = await Profile.findOne({ user: req.user!._id }).populate('user', ['name', 'avatar']);
 
 		if (!profile) throw new AppError("You don't have a profile yet.", 404);
@@ -174,21 +173,25 @@ const deleteProfileEducation = async (req: Request, res: Response, next: NextFun
 
 const getGithubRepos = async (req: Request, res: Response, next: NextFunction) => {
 	const githubName = req.params.githubName;
+
+	const options = {
+		uri: encodeURI(`https://api.github.com/users/${githubName}/repos?per_page=5&sort=created:asc`),
+		method: 'GET',
+		headers: {
+			'user-agent': 'node.js',
+			Authorization: `token ${process.env.GITHUB_TOKEN}`,
+		},
+	};
+
 	try {
 		const response = await fetch(
-			`https://api.github.com/users/${githubName}/repos?per_page=5&sort=created:asc&client_id=${process.env.CLIENT_GITHUB}&client_secret=${process.env.SECRET_GITHUB}`,
-			{
-				method: 'GET',
-				headers: {
-					'user-agent': 'node.js',
-				},
-			}
+			`https://api.github.com/users/${githubName}/repos?per_page=5&client_id=${process.env.CLIENT_GITHUB}&client_secret=${process.env.SECRET_GITHUB}`,
+			options
 		);
 
 		if (!response.ok) throw new AppError('No Github profile found.', 404);
 
 		const repos = await response.json();
-
 		res.status(200).json(repos);
 	} catch (err) {
 		next(err);

@@ -20,7 +20,6 @@ const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunc
 	if (err instanceof Error.ValidationError && err.name === 'ValidationError') {
 		const errorsArray: { field: string; error: string }[] = [];
 		const allErrors = err.errors;
-		console.log(allErrors);
 
 		Object.keys(allErrors).forEach(key =>
 			errorsArray.push({ field: allErrors[key].path, error: allErrors[key].message })
