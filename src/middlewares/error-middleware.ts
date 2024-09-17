@@ -2,14 +2,15 @@ import { NextFunction, Request, Response } from 'express';
 import { mongo, Error } from 'mongoose';
 
 import AppError from '../utils/AppError';
-import { removeImage } from '../utils/handle-images';
+
 import { MulterError } from 'multer';
 
 const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
 	console.error(err);
 
-	if (req.filePath) {
-		removeImage(req.filePath);
+	if (req.deleteFilePath) {
+		// FOR SOME REASON IMGBB API DOES NOT SUPPORT DELETE IMAGES TRU HTTP REQUESTS
+		console.log('Image should be deleted.');
 	}
 
 	if (err instanceof MulterError) {

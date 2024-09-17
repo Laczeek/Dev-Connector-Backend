@@ -6,6 +6,7 @@ interface IUser {
 	email: string;
 	password: string;
 	avatar: string;
+	deleteAvatar: string;
 	createdAt: Date;
 }
 
@@ -42,6 +43,10 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
 	avatar: {
 		type: String,
 		required: [true, 'Please provide your avatar image.'],
+	},
+	deleteAvatar: {
+		type: String,
+		required: true,
 	},
 	createdAt: {
 		type: Date,
