@@ -10,7 +10,7 @@ const SECRET_KEY = process.env.SECRET_JWT_KEY!;
 
 export const createToken = (payload: IPayloadJWT): Promise<string> => {
 	return new Promise((resolve, reject) => {
-		jwt.sign(payload, SECRET_KEY, { expiresIn: '30m' }, (err, token) => {
+		jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' }, (err, token) => {
 			if (err) {
 				return reject(err);
 			}
