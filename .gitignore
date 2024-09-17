@@ -2,3 +2,4 @@
 .env
 /dist
 **/public/images
+*DS_Store
