@@ -1,7 +1,7 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
 import path from 'path';
+import cors from 'cors';
 
 import errorMiddleware from './middlewares/error-middleware';
 import userRouter from './routers/user-router';
@@ -15,7 +15,10 @@ const MONGO_URL = process.env.MONGO_URL!;
 mongoose.connect(MONGO_URL);
 const app = express();
 
-app.use(cors());
+if (process.env.CURRENT_ENV === 'DEVELOPMENT') {
+	app.use(cors());
+}
+
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use(express.json());
@@ -24,6 +27,12 @@ app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/profiles', profileRouter);
 app.use('/api/posts', postRouter);
+
+if (process.env.CURRENT_ENV === 'PRODUCTION') {
+	app.get('*', (req: Request, res: Response) => {
+		res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+	});
+}
 
 // error middleware
 app.use(errorMiddleware);
