@@ -28,11 +28,11 @@ app.use('/api/posts', postRouter);
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// if (process.env.CURRENT_ENV === 'PRODUCTION') {
-// 	app.get('*', (req: Request, res: Response) => {
-// 		res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-// 	});
-// }
+if (process.env.CURRENT_ENV === 'PRODUCTION') {
+	app.get('*', (req: Request, res: Response) => {
+		res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+	});
+}
 
 // error middleware
 app.use(errorMiddleware);
