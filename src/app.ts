@@ -19,14 +19,14 @@ if (process.env.CURRENT_ENV === 'DEVELOPMENT') {
 	app.use(cors());
 }
 
-app.use(express.static(path.join(__dirname, '..', 'public')));
-
 app.use(express.json());
 // routes
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/profiles', profileRouter);
 app.use('/api/posts', postRouter);
+
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 if (process.env.CURRENT_ENV === 'PRODUCTION') {
 	app.get('*', (req: Request, res: Response) => {
