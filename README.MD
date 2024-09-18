@@ -30,3 +30,7 @@
 - better authentication based on access token and refresh token (http cookie)
 - email sending
 - possibility to update user data
+- rate limit
+- secure headers
+- mongo sanitize
+- xss sanitize
